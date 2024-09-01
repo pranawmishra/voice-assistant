@@ -1,5 +1,4 @@
 from src.helper_functions.retrieve_queries import retreive_queries
-from src.config.secrets import deepgram_api_key
 from src.helper_functions.speak_deepgram import speak_deepgram
 from src.helper_functions.save_call_history import save_call_history
 from src.helper_functions.restaurant_index_manager import index_manager
@@ -15,25 +14,14 @@ from src.helper_functions.speak_deepgram import speak_deepgram
 from src.helper_functions.create_order import Data
 from src.helper_functions.save_order_history import save_order_history
 from pinecone import Pinecone
-from langchain_together import TogetherEmbeddings
-from langchain_mistralai import MistralAIEmbeddings
 from langchain_cohere import CohereEmbeddings
 import os
 
 os.environ['PINECONE_API_KEY'] = pinecone_api_key
-# os.environ['TOGETHER_API_KEY'] = together_api_key
 os.environ['COHERE_API_KEY'] = cohere_api_key
 
-# os.environ['TOGETHER_API_KEY'] = together_api_key
-# os.environ['MISTRAL_API_KEY'] = mistral_api_key
 pc = Pinecone() 
-# embeddings = TogetherEmbeddings(
-#     model="togethercomputer/m2-bert-80M-8k-retrieval",
-# )
 embeddings = CohereEmbeddings(model='embed-english-v3.0')
-# MistralAIEmbeddings(model='mistral-embed')
-# Generate a random secret key
-# You can make this longer for additional security
 
 session_id = f'Pid_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
 message_history_chain,store = chain(groq_api_key,create_chain,create_msg_history)
