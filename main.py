@@ -10,19 +10,28 @@ from src.helper_functions.save_customer_details import save_customer_detail
 from src.helper_functions.restaurant_order_assistant import chain
 from src.helper_functions.store_session_memory import create_msg_history
 from src.helper_functions.pinecone_database import create_pinecone_db,load_existing_pinecone_db
-from src.config.secrets import deepgram_api_key,groq_api_key,together_api_key,pinecone_api_key
+from src.config.secrets import groq_api_key,pinecone_api_key,cohere_api_key
 from src.helper_functions.speak_deepgram import speak_deepgram
 from src.helper_functions.create_order import Data
 from src.helper_functions.save_order_history import save_order_history
 from pinecone import Pinecone
 from langchain_together import TogetherEmbeddings
+from langchain_mistralai import MistralAIEmbeddings
+from langchain_cohere import CohereEmbeddings
 import os
+
 os.environ['PINECONE_API_KEY'] = pinecone_api_key
-os.environ['TOGETHER_API_KEY'] = together_api_key
+# os.environ['TOGETHER_API_KEY'] = together_api_key
+os.environ['COHERE_API_KEY'] = cohere_api_key
+
+# os.environ['TOGETHER_API_KEY'] = together_api_key
+# os.environ['MISTRAL_API_KEY'] = mistral_api_key
 pc = Pinecone() 
-embeddings = TogetherEmbeddings(
-    model="togethercomputer/m2-bert-80M-8k-retrieval",
-)
+# embeddings = TogetherEmbeddings(
+#     model="togethercomputer/m2-bert-80M-8k-retrieval",
+# )
+embeddings = CohereEmbeddings(model='embed-english-v3.0')
+# MistralAIEmbeddings(model='mistral-embed')
 # Generate a random secret key
 # You can make this longer for additional security
 
@@ -71,8 +80,10 @@ index_name = input('Which index do you want to connect to? Else if this is a new
 
 if index_name in existing_indexes:
     index_exist = True
+    print('Index exists')
     retriever = index_manager(pc,embeddings,create_pinecone_db,load_existing_pinecone_db,index_name,index_exist=True)
 else:
+    print('Index does not exists')
     retriever = index_manager(pc,embeddings,create_pinecone_db,load_existing_pinecone_db,index_name,index_exist=False)
 
 
