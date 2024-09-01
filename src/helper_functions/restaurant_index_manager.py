@@ -24,6 +24,7 @@ def index_manager(pc,embeddings,create_pinecone_db,load_existing_pinecone_db,ind
     pdf_path = pdf_folder+'/'+pdf_file
     # if index_name not in existing_indexes:
     if index_exist==False:
+        print('Creating Index....')
         docsearch = create_pinecone_db(pdf_path,index_name,pc,embeddings)
         index = pc.Index(index_name)
         retriever = docsearch.as_retriever()
