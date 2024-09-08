@@ -1,8 +1,8 @@
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_qdrant import QdrantVectorStore
-from langchain_core.documents import Document
 import os
 import pandas as pd
+from langchain_core.documents import Document
+from langchain_qdrant import QdrantVectorStore
+from langchain_community.document_loaders import PyPDFLoader
 
 class QdrantDatabase:
     def __init__(self, url, qdrant_api_key, embeddings,qdrant_client):
@@ -67,7 +67,7 @@ class QdrantDatabase:
                 retriever = vector_store.as_retriever()
                 return retriever
         except Exception as e:
-            print(f'Wrong collection name {e}')
+            print(f'{e}')
             return None
 
 

@@ -1,24 +1,18 @@
 import os
 import json
-from langchain_core.prompts import ChatPromptTemplate
+from typing import Optional
 from langchain_groq import ChatGroq
-import json
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 # Define a custom prompt to provide instructions and any additional context.
 # 1) You can add examples into the prompt template to improve extraction quality
 # 2) Introduce additional parameters to take context into account (e.g., include metadata
 #    about the document from which the text was extracted.)
-
-from typing import Optional,List
-
-from langchain_core.pydantic_v1 import BaseModel, Field
-
-
 class Extract_Name(BaseModel):
     """Information about Menu Items."""
     customer_name: Optional[str] = Field(
         default=None, description="The full name of the customer")
-    
 
 
 def prompt_to_store_caller_detail(api_key):

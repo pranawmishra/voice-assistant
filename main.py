@@ -1,21 +1,20 @@
 import os
-from src.helper_functions.retrieve_queries import retreive_queries
-from src.helper_functions.save_call_history import save_call_history
-from src.helper_functions.restaurant_index_manager import index_manager
-from src.helper_functions.order_processing_and_storage import prompt_to_store_order, save_in_json
-from src.helper_functions.save_customer_details import save_customer_detail
-from src.helper_functions.restaurant_order_assistant import chain
-from src.helper_functions.store_session_memory import create_msg_history
-from src.helper_functions.pinecone_database import create_pinecone_db,load_existing_pinecone_db
+import cohere
+import datetime
+from qdrant_client import QdrantClient
+from langchain_cohere import CohereEmbeddings
+from langchain_core.documents import Document
+from src.helper_functions.create_order import Data
 from src.config.secrets import ConfigurationManager
 from src.helper_functions.speak_deepgram import speak_deepgram
-from src.helper_functions.create_order import Data
-from src.helper_functions.save_order_history import save_order_history
-from langchain_cohere import CohereEmbeddings
 from src.helper_functions.qdrant_database import QdrantDatabase
-from qdrant_client import QdrantClient
-from langchain_core.documents import Document
-import cohere
+from src.helper_functions.restaurant_order_assistant import chain
+from src.helper_functions.retrieve_queries import retreive_queries
+from src.helper_functions.save_call_history import save_call_history
+from src.helper_functions.save_order_history import save_order_history
+from src.helper_functions.store_session_memory import create_msg_history
+from src.helper_functions.save_customer_details import save_customer_detail
+from src.helper_functions.order_processing_and_storage import prompt_to_store_order, save_in_json
 
 config_manager = ConfigurationManager()
 os.environ['COHERE_API_KEY'] = config_manager.cohere_api_key
@@ -30,9 +29,8 @@ qdrant_database = QdrantDatabase(config_manager.url,
                                  config_manager.qdrant_api_key,
                                  embeddings,
                                  qdrant_client)
-# session_id = f'Pid_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+session_id = f'Pid_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
 cohere_client = cohere.Client(config_manager.cohere_api_key)
-session_id = '002'
 message_history_chain,store = chain(config_manager.groq_api_key,create_msg_history)
 
 
@@ -72,16 +70,13 @@ def main(session_id,retriever,message_history_chain, question):
         })
     
     ai_content, content= retreive_queries(question,relevant_documents,session_id,message_history_chain)
-    
-    
-    # content = dict(ai_content)['content']
-    
+        
     # save_call_history(session_id,content,question)
 
     # SPEAK_OPTIONS = {"text": content}
     # mp3_file = speak_deepgram(deepgram_api_key,SPEAK_OPTIONS,'output.wav') # need to comment out the line if we are using twilio inbuilt text to speech
 
-    return relevant_documents,ai_content,content #,mp3_file #need to comment mp3_file to use twilio speech to text
+    return relevant_documents,ai_content,content
 
 
 
@@ -95,7 +90,6 @@ print(existing_indexes)
 index_name = input('Which index do you want to connect to? Else if this is a new index please provide the new index name here: ')
 
 if index_name in existing_indexes:
-    index_exist = True
     print('Index exists')
     retriever = qdrant_database.query_collection(index_name)
 else:
@@ -103,25 +97,20 @@ else:
     retriever = qdrant_database.create_collection(index_name)
 
 
-
-prev_ques = []
 while True:
 
     question = input('Enter your question: ')
     if question=='exit()':
         break
     else:
-        retrieved_docs = (retriever.invoke(question))
+        retrieved_docs = retriever.invoke(question)
         relevant_documents,ai_content, content = main(session_id,retriever, message_history_chain, question)
         print('Answer:',content)
         print('Retrieved documents type',type(retrieved_docs))
         for i, doc in enumerate(relevant_documents):
-            # print('Page COntent')
-            # print(i,doc.page_content)
             print('------------------------------------')
             print('Docs')
             print(doc)
-            print(type(doc))
         print('-----------------------------------')
 
 
