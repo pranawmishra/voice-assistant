@@ -17,8 +17,7 @@ class QdrantDatabase:
         documents = []
         for index, row in df.iterrows():
             text = f"Dish Category: {row['Dish Category']} \n Dish Name: {row['Dish Name']} \n Price: {row['Price']} \n Dish Details: {row['Dish Detail']} \n"
-            documents.append(Document(page_content=text, metadata={'filepath': filepath,
-                                                                'Row': index+1}))
+            documents.append(Document(page_content=text, metadata={'filepath': filepath,'Row': index+1}))
         
         return documents
 
