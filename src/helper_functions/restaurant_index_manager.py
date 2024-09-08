@@ -12,6 +12,8 @@ def index_manager(pc,embeddings,create_pinecone_db,load_existing_pinecone_db,ind
     embeddings (object): The embeddings object used to create/load the Pinecone vector store.
     create_pinecone_db (function): The function to create a new Pinecone database.
     load_existing_pinecone_db (function): The function to load an existing Pinecone database.
+    index_name (str): The name of the Pinecone index to be created/loaded.
+    index_exist (bool): A flag indicating whether the index already exists.
 
     Returns:
     object: A retriever object for querying the Pinecone database.
