@@ -15,7 +15,7 @@ def retreive_queries(question,retriever,session_id,messgae_history_chain):
 
     ai_content = messgae_history_chain.invoke(
         {"input": question,
-        "context": retriever.invoke(question)},
+        "context": retriever},
         {"configurable": {"session_id": session_id}},
     )
 
