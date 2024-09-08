@@ -19,9 +19,8 @@ def create_pinecone_db(path,index_name,pc,embeddings):
     PineconeVectorStore: The created Pinecone vector store with the indexed documents.
     """
 
-    # loader = CSVLoader(path)
+    loader = CSVLoader(path)
     # loader = PyPDFLoader(path)
-    loader = PyPDFLoader(path)
     documents = []
     for load in ([loader]):
         try:
@@ -33,7 +32,7 @@ def create_pinecone_db(path,index_name,pc,embeddings):
     docs = text_splitter.split_documents(documents)
     pc.create_index(
         name=index_name,
-        dimension=1024,
+        dimension=384,
         metric='cosine',
         spec=ServerlessSpec(cloud="aws", region="us-east-1")
     )
