@@ -1,5 +1,8 @@
-gpt_model = 'gpt-4-turbo-preview'
-lamma3_70b = 'llama3-70b-8192'
-lamma3_8b = 'llama3-8b-8192'
-mixtral_7b = 'mixtral-8x7b-32768'
-gemma_7b = 'gemma-7b-it'
+class Models:
+    gemma_7b = 'gemma-7b-it'
+    lamma3_70b = 'llama3-70b-8192'
+    mixtral_7b = 'mixtral-8x7b-32768'
+    cohere_rerank = 'rerank-english-v3.0'
+    cohere_embedding = 'embed-english-v3.0'
+    cohere_embedding_light = 'embed-english-light-v3.0'
+    

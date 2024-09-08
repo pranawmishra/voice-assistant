@@ -1,9 +1,10 @@
 import os
 import cohere
 import datetime
+from src.config.models import Models
 from qdrant_client import QdrantClient
-from langchain_cohere import CohereEmbeddings
 from langchain_core.documents import Document
+from langchain_cohere import CohereEmbeddings
 from src.helper_functions.create_order import Data
 from src.config.secrets import ConfigurationManager
 from src.helper_functions.speak_deepgram import speak_deepgram
@@ -17,10 +18,11 @@ from src.helper_functions.save_customer_details import save_customer_detail
 from src.helper_functions.order_processing_and_storage import prompt_to_store_order, save_in_json
 
 config_manager = ConfigurationManager()
+models = Models()
 os.environ['COHERE_API_KEY'] = config_manager.cohere_api_key
 
 
-embeddings = CohereEmbeddings(model='embed-english-light-v3.0')
+embeddings = CohereEmbeddings(model=models.cohere_embedding_light)
 qdrant_client = QdrantClient(
     url = config_manager.url,
     api_key=config_manager.qdrant_api_key
@@ -31,7 +33,7 @@ qdrant_database = QdrantDatabase(config_manager.url,
                                  qdrant_client)
 session_id = f'Pid_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
 cohere_client = cohere.Client(config_manager.cohere_api_key)
-message_history_chain,store = chain(config_manager.groq_api_key,create_msg_history)
+message_history_chain,store = chain(config_manager.groq_api_key,create_msg_history,models.lamma3_70b)
 
 
 def main(session_id,retriever,message_history_chain, question):
@@ -55,7 +57,7 @@ def main(session_id,retriever,message_history_chain, question):
     print(question)
     relevant_content = retriever.invoke(question)
     page_contents = [doc.page_content for doc in relevant_content]
-    rerank_response = cohere_client.rerank(query=question,documents = page_contents, model = 'rerank-english-v3.0',return_documents=True)
+    rerank_response = cohere_client.rerank(query=question,documents = page_contents, model = models.cohere_rerank,return_documents=True)
     # print(rerank_response)
     reranked_result = []
     relevant_documents = []

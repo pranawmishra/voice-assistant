@@ -2,7 +2,7 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
-def create_chain(groq_api_key,SYSTEM_TEMPLATE):
+def create_chain(groq_api_key,SYSTEM_TEMPLATE,model):
     """
     Creates a question-answering chain using ChatGroq and a custom prompt template.
 
@@ -21,7 +21,7 @@ def create_chain(groq_api_key,SYSTEM_TEMPLATE):
                       and ChatGroq model.
     """
     
-    chat = ChatGroq(temperature=0, model_name="llama3-70b-8192",api_key=groq_api_key)
+    chat = ChatGroq(temperature=0, model_name=model,api_key=groq_api_key)
 
     question_answering_prompt = ChatPromptTemplate.from_messages(
         [
@@ -38,7 +38,7 @@ def create_chain(groq_api_key,SYSTEM_TEMPLATE):
 
     return chain
 
-def chain(groq_api_key,create_msg_history):
+def chain(groq_api_key:str,create_msg_history,model:str):
     """
     Creates a message history chain for a polite restaurant staff assistant.
 
@@ -60,7 +60,7 @@ def chain(groq_api_key,create_msg_history):
                         {context}
                         """
 
-    chain = create_chain(groq_api_key,SYSTEM_TEMPLATE)
+    chain = create_chain(groq_api_key,SYSTEM_TEMPLATE,model)
 
     messgage_history_chain,store = create_msg_history(chain)
     return messgage_history_chain,store

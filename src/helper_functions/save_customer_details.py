@@ -2,6 +2,7 @@ import os
 import json
 from typing import Optional
 from langchain_groq import ChatGroq
+from src.config.models import Models
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
 
